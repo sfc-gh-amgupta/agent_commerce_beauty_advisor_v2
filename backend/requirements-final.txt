@@ -1,0 +1,21 @@
+# Agent Commerce Backend - Final Requirements
+# dlib and face-recognition are installed separately in Dockerfile
+
+# Web framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Image processing
+Pillow==10.2.0
+numpy==1.26.3
+opencv-python-headless==4.9.0.80
+
+# MediaPipe for face mesh
+mediapipe==0.10.9
+
+# Utilities
+pydantic==2.5.3
+requests==2.31.0
+httpx==0.27.0
+

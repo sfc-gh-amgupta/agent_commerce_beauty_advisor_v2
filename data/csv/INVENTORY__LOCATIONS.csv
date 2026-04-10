@@ -1,0 +1,126 @@
+LOCATION_ID,NAME,LOCATION_TYPE,LOCATION_CODE,ADDRESS_LINE1,ADDRESS_LINE2,CITY,STATE,POSTAL_CODE,COUNTRY,LATITUDE,LONGITUDE,PHONE,EMAIL,OPERATING_HOURS,IS_ACTIVE,IS_PICKUP_ENABLED,CREATED_AT
+87b613ef-230b-47a7-b8cb-28aa5a99d029,New York Warehouse 1,warehouse,WANY01,2298 Main Street,,New York,NY,59481,US,40.77251550421667,-74.00058689889255,+18876145955,warehouse.ny1@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,False,2025-05-05 15:26:59
+775f6785-8da6-402b-a8c0-6189572ed8e7,Los Angeles Warehouse 2,warehouse,WACA02,5170 Main Street,,Los Angeles,CA,80053,US,34.14304717075537,-118.31649504228665,+14855011158,warehouse.ca2@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,False,2025-06-10 15:43:59
+21e1cdc0-716b-4735-ba8c-5f7bdd7e3cf8,Chicago Warehouse 3,warehouse,WAIL03,9754 Main Street,Suite 504,Chicago,IL,80803,US,41.95335023491375,-87.60165318368354,+18378564820,warehouse.il3@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,False,2025-02-27 04:39:59
+7ce89085-23eb-4667-a8c2-ae88db38ac74,Houston Warehouse 4,warehouse,WATX04,8660 Main Street,,Houston,TX,91755,US,29.725878754255362,-95.44235463959824,+15158005854,warehouse.tx4@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,False,2025-02-24 03:51:59
+9c14f868-16d5-4ebf-8750-fd6093aa9e0f,Phoenix Warehouse 5,warehouse,WAAZ05,8341 Main Street,Suite 520,Phoenix,AZ,75997,US,33.38002474471606,-112.13325069098707,+15791317006,warehouse.az5@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,False,2025-02-07 03:50:59
+40ee3e93-9d8a-4223-971f-f4048795e974,Philadelphia Store 1,store,STPA01,7171 Main Street,,Philadelphia,PA,31361,US,39.887420005418605,-75.1348573499245,+15138668955,store.pa1@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-02-19 20:11:59
+870cb85d-8c5b-4aee-b4e8-5484dc0b2b71,San Antonio Store 2,store,STTX02,1664 Main Street,,San Antonio,TX,57395,US,29.512635055032028,-98.44683549029385,+12817081412,store.tx2@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-06-08 09:33:59
+c05e0443-65fd-427c-b30e-3ac52bf80251,San Diego Store 3,store,STCA03,3958 Main Street,,San Diego,CA,14257,US,32.66001769946801,-117.0673954831675,+14325031847,store.ca3@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-01-11 04:45:59
+6702fe7c-e2e5-4d82-96e9-53ff0b9e2ad8,Dallas Store 4,store,STTX04,3409 Main Street,Suite 572,Dallas,TX,45235,US,32.71709400960417,-96.73597977208503,+15489436894,store.tx4@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-03-10 00:54:59
+99b789c4-6c09-4c6a-b0ce-c5f02a4c2e08,San Jose Store 5,store,STCA05,6646 Main Street,Suite 379,San Jose,CA,82069,US,37.3442796413144,-121.85507219261804,+15455849586,store.ca5@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-03-04 10:20:59
+286eeebb-0b7f-4d80-9681-e8c93779c598,Austin Store 6,store,STTX06,376 Main Street,Suite 831,Austin,TX,65414,US,30.230496577927372,-97.72332158012046,+18446343261,store.tx6@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-06-01 12:50:59
+8be7b06e-0a5a-46e3-969d-a09fabb598fe,Jacksonville Store 7,store,STFL07,2114 Main Street,,Jacksonville,FL,79508,US,30.340182311726483,-81.61637061443395,+14166922369,store.fl7@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-05-28 00:02:59
+2b8b4eed-4edf-439c-9c77-448ef4937d1e,Fort Worth Store 8,store,STTX08,7263 Main Street,,Fort Worth,TX,72944,US,32.70399714774512,-97.28630158270876,+15231056145,store.tx8@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-06-01 02:22:59
+e61800f3-c8a1-43fe-afbf-6d31a87fb9ad,Columbus Store 9,store,STOH09,2019 Main Street,,Columbus,OH,76761,US,40.02677943568679,-83.08485039847398,+15986433501,store.oh9@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-04-17 10:18:59
+4af11e70-d6b3-43d8-b48c-41f60e8a835c,Indianapolis Store 10,store,STIN10,1273 Main Street,,Indianapolis,IN,36691,US,39.754051408180764,-86.22776095828442,+19909726830,store.in10@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-03-10 21:22:59
+91458e9c-16ac-4e41-94d4-9d3b0b880692,Charlotte Store 11,store,STNC11,1588 Main Street,Suite 917,Charlotte,NC,57441,US,35.315618955175275,-80.74893772101856,+18346018984,store.nc11@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2024-12-21 16:06:59
+435b0a2e-fa85-4471-8cfc-e24b87422688,Seattle Store 12,store,STWA12,902 Main Street,,Seattle,WA,39096,US,47.70144073280877,-122.31739252950184,+14601491056,store.wa12@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-06-03 16:12:59
+7bb52bcc-6af2-41be-a4d1-4e4269141113,Denver Store 13,store,STCO13,4894 Main Street,Suite 522,Denver,CO,86006,US,39.735419104137044,-105.026531648321,+13319935605,store.co13@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-02-18 12:34:59
+f1af3aac-272c-4870-84c0-ef67fb58b918,Boston Store 14,store,STMA14,5889 Main Street,,Boston,MA,22724,US,42.28069222901997,-70.97083627630921,+13009427232,store.ma14@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-06-14 06:11:59
+c88b94a2-877c-46a8-b190-d3100918de15,Miami Store 15,store,STFL15,7974 Main Street,Suite 545,Miami,FL,27462,US,25.751270546587698,-80.24983338304098,+15102946340,store.fl15@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-01-28 00:34:59
+3eb94dcb-1a9a-4677-b324-bb7fe91124f5,New York Store 16,store,STNY16,2939 Main Street,,New York,NY,67148,US,40.67707844480217,-73.92326951952433,+14099772633,store.ny16@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-04-10 07:37:59
+0b2ab58f-e495-41d6-bb22-6e9ba02e0079,Los Angeles Store 17,store,STCA17,6420 Main Street,,Los Angeles,CA,11253,US,34.02303542309895,-118.19527642104237,+17631082122,store.ca17@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-04-14 21:39:59
+dfd0b183-9ed0-46bf-bd8e-383e48bd07a4,Chicago Store 18,store,STIL18,9211 Main Street,,Chicago,IL,48357,US,41.96860409228845,-87.60356487181005,+16595029977,store.il18@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,True,2025-03-13 02:42:59
+177e56a5-67fa-4dd2-b6a9-a1cc8c5aae02,Houston Popup 1,popup,POTX01,3353 Main Street,Suite 703,Houston,TX,11132,US,29.75201990823645,-95.4184246728736,+16333415258,popup.tx1@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,False,2025-01-01 22:50:59
+1adf53d4-c343-458f-ac0a-81839b35e9a6,Phoenix Popup 2,popup,POAZ02,404 Main Street,,Phoenix,AZ,46788,US,33.514207982761285,-112.05091729105037,+17469882811,popup.az2@agentcommerce.com,"{
+  ""mon-fri"": ""9:00-21:00"",
+  ""sat"": ""10:00-20:00"",
+  ""sun"": ""11:00-18:00""
+}",True,False,2025-01-20 03:05:59

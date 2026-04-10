@@ -1,0 +1,6 @@
+OPTION_ID,NAME,DESCRIPTION,FULFILLMENT_TYPE,PRICE_CENTS,FREE_THRESHOLD_CENTS,ESTIMATED_DAYS_MIN,ESTIMATED_DAYS_MAX,CARRIER,IS_AVAILABLE,AVAILABLE_COUNTRIES,DISPLAY_ORDER,CREATED_AT
+06548384-d82a-4802-b2ae-3fe87d250319,Express Shipping,Express Shipping - 2-3 business days,shipping,999,0,2,3,UPS,True,"US,CA",1,2024-12-19 13:17:53
+290da9ba-aaf2-43c0-af81-1f4d6de2ed21,Store Pickup,Pick up at your nearest store,pickup,0,0,0,1,,True,"US,CA",4,2024-12-19 21:17:53
+7d610892-6f6b-4d72-b876-1e25f1c9789f,Next Day,Next Day - 1-1 business days,shipping,1499,0,1,1,FedEx,True,"US,CA",2,2024-12-19 23:07:53
+b83f4c8f-2d98-4be2-97df-c91559dd1cd3,Free Shipping,Free Shipping - 7-10 business days,shipping,0,5000,7,10,USPS,True,"US,CA",3,2024-12-19 23:23:53
+fc3b652f-fb05-448c-8d1b-708597c8549d,Standard Shipping,Standard Shipping - 5-7 business days,shipping,599,0,5,7,USPS,True,"US,CA",0,2024-12-19 14:23:53

@@ -70,10 +70,16 @@ CREATE STAGE IF NOT EXISTS UTIL.EXECUTIVE_360_STAGE
     ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
     DIRECTORY = (ENABLE = TRUE);
 
-CREATE NOTIFICATION INTEGRATION IF NOT EXISTS EMAIL_INTEGRATION
-    TYPE = EMAIL
-    ALLOWED_RECIPIENTS = ('cdo@operations.com', 'coo@operations.com')
-    ENABLED = TRUE;
+BEGIN
+    CREATE NOTIFICATION INTEGRATION IF NOT EXISTS EMAIL_INTEGRATION
+        TYPE = EMAIL
+        ALLOWED_RECIPIENTS = ('cdo@operations.com', 'coo@operations.com')
+        ENABLED = TRUE;
+EXCEPTION
+    WHEN OTHER THEN
+        -- Email recipients may not be validated on all accounts; skip if so
+        NULL;
+END;
 
 -- External access integration for SPCS backend
 -- Update the FQDN after SPCS service is created

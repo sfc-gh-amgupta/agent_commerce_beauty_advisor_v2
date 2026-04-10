@@ -140,25 +140,23 @@ INSERT INTO PRODUCTS.PRODUCT_LABEL_FILES
     SELECT RELATIVE_PATH FROM DIRECTORY(@PRODUCTS.PRODUCT_LABELS_STAGE);
 
 -- Derive SKIN_TYPE_COMPATIBILITY for products
+-- Step 1: Base skin type from finish
+UPDATE PRODUCTS.PRODUCTS
+SET SKIN_TYPE_COMPATIBILITY = 
+    CASE 
+        WHEN FINISH IN ('matte', 'powder') THEN ARRAY_CONSTRUCT('oily', 'combination')
+        WHEN FINISH IN ('dewy', 'cream', 'satin') THEN ARRAY_CONSTRUCT('dry', 'combination')
+        WHEN FINISH IN ('natural', 'semi-matte') THEN ARRAY_CONSTRUCT('normal', 'combination')
+        ELSE ARRAY_CONSTRUCT('combination')
+    END
+WHERE SKIN_TYPE_COMPATIBILITY IS NULL OR ARRAY_SIZE(SKIN_TYPE_COMPATIBILITY) = 0;
+
+-- Step 2: Add 'sensitive' for products with no allergens
 UPDATE PRODUCTS.PRODUCTS p
-SET SKIN_TYPE_COMPATIBILITY = (
-    SELECT ARRAY_AGG(DISTINCT skin_type) 
-    FROM (
-        SELECT 
-            CASE 
-                WHEN p.FINISH IN ('matte', 'powder') THEN 'oily'
-                WHEN p.FINISH IN ('dewy', 'cream', 'satin') THEN 'dry'
-                WHEN p.FINISH IN ('natural', 'semi-matte') THEN 'normal'
-                ELSE 'combination'
-            END AS skin_type
-        UNION ALL
-        SELECT 'combination'
-        UNION ALL
-        SELECT 'sensitive'
-        FROM PRODUCTS.PRODUCT_INGREDIENTS pi 
-        WHERE pi.PRODUCT_ID = p.PRODUCT_ID 
-        AND pi.IS_ALLERGEN = FALSE
-        HAVING COUNT(*) > 0
-    )
+SET SKIN_TYPE_COMPATIBILITY = ARRAY_APPEND(SKIN_TYPE_COMPATIBILITY, 'sensitive')
+WHERE EXISTS (
+    SELECT 1 FROM PRODUCTS.PRODUCT_INGREDIENTS pi 
+    WHERE pi.PRODUCT_ID = p.PRODUCT_ID AND pi.IS_ALLERGEN = FALSE
+    HAVING COUNT(*) > 0
 )
-WHERE p.SKIN_TYPE_COMPATIBILITY IS NULL OR ARRAY_SIZE(p.SKIN_TYPE_COMPATIBILITY) = 0;
+AND NOT ARRAY_CONTAINS('sensitive'::VARIANT, SKIN_TYPE_COMPATIBILITY);

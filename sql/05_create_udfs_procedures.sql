@@ -334,16 +334,6 @@ AS '
 -- ============================================================
 USE SCHEMA PRODUCTS;
 
-CREATE OR REPLACE DATA METRIC FUNCTION "COST_EXCEEDS_PRICE"("ARG_T" TABLE(NUMBER(38,0), NUMBER(38,0)))
-RETURNS NUMBER(38,0)
-LANGUAGE SQL
-COMMENT='Counts rows where cost exceeds price'
-AS '
-  SELECT COUNT(*)
-  FROM arg_t
-  WHERE arg_cost > arg_price
-';
-
 CREATE OR REPLACE FUNCTION "TOOL_GET_LABEL_URL"("STAGE_PATH" VARCHAR)
 RETURNS VARCHAR
 LANGUAGE SQL

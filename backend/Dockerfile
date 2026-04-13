@@ -1,8 +1,5 @@
 # ============================================================================
-# Agent Commerce - Backend + Frontend Dockerfile
-# ============================================================================
-# Expects frontend to be pre-built and copied to ./static/ before build
-# Use deploy.sh which handles the frontend build automatically
+# Agent Commerce - Backend Dockerfile
 # ============================================================================
 
 FROM python:3.9-slim-bullseye
@@ -44,8 +41,7 @@ RUN pip install --no-cache-dir -r requirements-final.txt
 # Copy application code
 COPY app/ ./app/
 
-# Copy pre-built frontend (built by deploy.sh)
-COPY static/ ./static/
+RUN mkdir -p /app/static
 
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash appuser && \

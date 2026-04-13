@@ -100,7 +100,7 @@ WITH raw_extraction AS (
         f.FILE_PATH,
         SPLIT_PART(REPLACE(REPLACE(f.FILE_PATH, '.png', ''), '.jpeg', ''), '_', 1) AS SKU,
         AI_COMPLETE(
-            'mistral-large2',
+            'claude-opus-4-6',
             'Extract ALL information from this cosmetic Drug Facts label. Return ONLY a JSON object:
 {
   "brand": "",

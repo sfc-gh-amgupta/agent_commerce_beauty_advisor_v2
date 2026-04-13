@@ -1162,7 +1162,7 @@ def call_agent(user_message, history_json):
         
         # Build request
         request_body = {
-            "model": "claude-4-sonnet",
+            "model": "claude-opus-4-6",
             "messages": messages,
             "tools": [],
             "stream": False

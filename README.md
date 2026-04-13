@@ -43,6 +43,7 @@ A complete Snowflake demo featuring two Cortex Agents for cosmetics retail: a cu
 ## Prerequisites
 
 - **Snowflake account** with ACCOUNTADMIN role
+- **Cross-region inference** enabled (`CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION'`) — required for the `claude-opus-4-6` model used by agents, Dynamic Table AI extraction, and face analysis
 - **Docker Desktop** installed and running (for SPCS backend)
 - **Snowflake CLI** (`snow`) installed
 - **No Docker Hub account needed** - images are built locally and pushed directly to Snowflake registry
@@ -181,6 +182,7 @@ docker push $REPO_URL/agent-commerce-backend:latest
 | | EXECUTIVE_PRODUCT_360 | UTIL | AGENT (6 tools) |
 | **MCP Server** | AGENTIC_COMMERCE_MCP_SERVER | UTIL | MCP SERVER |
 | **Streamlit** | EXECUTIVE_PRODUCT_360 | UTIL | STREAMLIT |
+| **Notebook** | NRFDEMO_MULTIMODAL_PROCESSING | UTIL | NOTEBOOK |
 | **SPCS** | AGENT_COMMERCE_BACKEND | UTIL | SERVICE |
 | | AGENT_COMMERCE_POOL | - | COMPUTE POOL |
 | **DMFs** | COST_EXCEEDS_PRICE (custom) + FRESHNESS, NULL_COUNT, ROW_COUNT (built-in) | PRODUCTS | DMF |
@@ -194,7 +196,7 @@ This demo uses a **two-stage design** for product label images:
 
 | Stage | Contents | Purpose |
 |-------|----------|---------|
-| `PRODUCTS.PRODUCT_LABELS_STAGE` | 2,001 unique PNGs | Source for AI extraction via Dynamic Table (`AI_COMPLETE('gemini-3-pro', ...)`) |
+| `PRODUCTS.PRODUCT_LABELS_STAGE` | 2,001 unique PNGs | Source for AI extraction via Dynamic Table (`AI_COMPLETE('claude-opus-4-6', ...)`) |
 | `PRODUCTS.PRODUCT_MEDIA_STAGE/labels/` | 2,000 PNGs | URL references for `GetLabelURL` tool (presigned URLs for chat display) |
 
 The `GetLabelURL` UDF generates presigned URLs from `PRODUCT_MEDIA_STAGE` paths, not `PRODUCT_LABELS_STAGE`. This is intentional — the media stage paths are stored in the `PRODUCT_MEDIA` table's `label_image_url` column and referenced by Cortex Search results.
@@ -298,7 +300,7 @@ agent_commerce_beauty_advisor_v2/
 - **Face Analysis**: Upload a photo to get skin tone, undertone, and personalized product recommendations
 - **Customer Identification**: Face embedding matching to identify returning customers (privacy-first verification flow)
 - **Color Matching**: Find products matching customer's skin tone using color distance algorithm
-- **Label Intelligence**: AI-extracted ingredient and warning data from 2,000+ product labels via Dynamic Table + Gemini
+- **Label Intelligence**: AI-extracted ingredient and warning data from 2,000+ product labels via Dynamic Table + Claude
 - **Cortex Search**: Semantic search across products, labels, and social content
 - **ACP-Compliant Checkout**: Full cart lifecycle (create, add, update, remove, checkout) via hybrid tables
 - **Executive Analytics**: Cross-domain analytics with email reporting via Streamlit dashboard
@@ -307,7 +309,7 @@ agent_commerce_beauty_advisor_v2/
 ## Notebook
 
 `NRFDEMO_MULTIMODAL_PROCESSING.ipynb` demonstrates the AISQL pipeline:
-1. `AI_COMPLETE` with `gemini-3-pro` to extract text from product label images
+1. `AI_COMPLETE` with `claude-opus-4-6` to extract text from product label images
 2. `TO_FILE` to write extracted text back to stage
 3. Dynamic Table (`PRODUCT_LABEL_EXTRACT`) for continuous processing
 4. Cortex Search Service for semantic search over extracted content

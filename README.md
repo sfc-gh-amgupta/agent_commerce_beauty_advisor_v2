@@ -53,10 +53,10 @@ A complete Snowflake demo featuring two Cortex Agents for cosmetics retail: a cu
 The recommended deployment method is via Cortex Code (CoCo):
 
 ```
-Ask CoCo: "Deploy the agent commerce beauty advisor demo"
+/agent_commerce_beauty_advisor_skill
 ```
 
-This invokes the `deploy-agent-commerce-beauty-advisor` skill which handles all steps automatically.
+This invokes the `agent_commerce_beauty_advisor_skill` skill which handles all steps automatically.
 
 ## Manual Deployment
 

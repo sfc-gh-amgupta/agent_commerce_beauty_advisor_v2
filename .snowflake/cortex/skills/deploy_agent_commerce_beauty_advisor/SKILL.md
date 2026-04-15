@@ -432,15 +432,16 @@ Present the chatbot URL to the user and instruct them to open it in their browse
 
 After all tests pass, present the following to the user as the final deployment handoff.
 
-### 9a. Retrieve URLs
+### 9a. Retrieve Live URLs (MUST run before presenting summary)
 
-Run these to get the live URLs:
+**IMPORTANT**: Always query the database for the latest URLs — NEVER cache or hardcode them. The SPCS ingress URL can change after service recreation.
+
+Run these queries and capture the results:
 
 ```sql
 SHOW ENDPOINTS IN SERVICE AGENT_COMMERCE.UTIL.AGENT_COMMERCE_BACKEND;
 ```
-
-Extract the `ingress_url` from the result — this is the **Beauty Advisor Chatbot URL**. Users open this in their browser, authenticate via Snowflake OAuth (passkey/biometric), and get the chatbot UI.
+Capture the `ingress_url` column value — this is the **Beauty Advisor Chatbot URL**.
 
 ```sql
 SHOW STREAMLITS IN SCHEMA AGENT_COMMERCE.UTIL;
@@ -448,7 +449,7 @@ SHOW STREAMLITS IN SCHEMA AGENT_COMMERCE.UTIL;
 
 ### 9b. Present Final Summary
 
-Present this to the user in a clean format:
+Substitute the **actual URLs** from Step 9a into the summary below. Do NOT present placeholder URLs — the user needs clickable links.
 
 ---
 
@@ -458,7 +459,7 @@ Present this to the user in a clean format:
 
 | What | Where |
 |------|-------|
-| **Beauty Advisor Chatbot** | `https://<ingress_url from SHOW ENDPOINTS>` (open in browser — requires Snowflake OAuth) |
+| **Beauty Advisor Chatbot** | `https://<ACTUAL ingress_url from Step 9a SHOW ENDPOINTS query>` (open in browser — requires Snowflake OAuth) |
 | **Executive Product 360 Dashboard** | Snowsight > Streamlit > `AGENT_COMMERCE.UTIL.EXECUTIVE_PRODUCT_360` |
 | **Notebook (AISQL Pipeline)** | Snowsight > Notebooks > `AGENT_COMMERCE.UTIL.NRFDEMO_MULTIMODAL_PROCESSING` |
 | **MCP Server** | `AGENT_COMMERCE.UTIL.AGENTIC_COMMERCE_MCP_SERVER` — connect from ChatGPT, Claude Desktop, or VS Code Copilot |

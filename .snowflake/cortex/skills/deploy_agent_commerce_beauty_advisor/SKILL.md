@@ -245,6 +245,8 @@ EXECUTE IMMEDIATE FROM @AGENT_COMMERCE.UTIL.AGENT_COMMERCE_GIT/branches/main/sql
 EXECUTE IMMEDIATE FROM @AGENT_COMMERCE.UTIL.AGENT_COMMERCE_GIT/branches/main/sql/09_deploy_spcs.sql;
 ```
 
+**NOTE**: The script uses `CREATE OR REPLACE SERVICE` so re-running it will recreate the service with the latest image. Suspend/resume does NOT pull new images — only DROP+CREATE (or CREATE OR REPLACE) does. The ingress URL changes after recreation — always query `SHOW ENDPOINTS` for the current URL.
+
 Wait for SPCS service:
 ```sql
 SELECT SYSTEM$GET_SERVICE_STATUS('AGENT_COMMERCE.UTIL.AGENT_COMMERCE_BACKEND');

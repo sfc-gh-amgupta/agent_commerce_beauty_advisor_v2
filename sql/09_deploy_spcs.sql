@@ -5,7 +5,7 @@ USE SCHEMA UTIL;
 -- NOTE: The container image must be built and pushed to the image repository first.
 -- See README for instructions on building and pushing the backend image.
 
-CREATE SERVICE IF NOT EXISTS AGENT_COMMERCE_BACKEND
+CREATE OR REPLACE SERVICE AGENT_COMMERCE_BACKEND
   IN COMPUTE POOL AGENT_COMMERCE_POOL
   FROM SPECIFICATION $$
   spec:

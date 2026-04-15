@@ -416,18 +416,6 @@ SHOW ENDPOINTS IN SERVICE AGENT_COMMERCE.UTIL.AGENT_COMMERCE_BACKEND;
 ```
 Confirm `ingress_url` is returned and `is_public = true`.
 
-**Manual chatbot test (user performs in browser):**
-Present the chatbot URL to the user and instruct them to open it in their browser to test conversationally:
-
-| # | Question | What to Look For |
-|---|----------|-----------------|
-| 1 | Can you recommend face products for my oily skin with warm undertone | Product names with prices, skin-type filtering |
-| 2 | Compare these 2 foundations - Summer Fridays Luxe Foundation and Drunk Elephant Pro Foundation | Both products mentioned with comparison |
-| 3 | How are the reviews for Summer Fridays Luxe Foundation on your website | Review summaries, ratings, or sentiment |
-| 4 | Do you have it in stock? | Inventory/stock info using conversation context |
-| 5 | Add it to my cart and checkout | Cart creation and checkout confirmation |
-| 6 | List the ingredients and any warnings I should be aware of for Summer Fridays Luxe Foundation | Ingredient list and/or warnings |
-
 **Only proceed to Step 9 after Step 8 SQL tests pass and SPCS service is confirmed READY.**
 
 ## Step 9: Deployment Complete — Everything You Need to Demo

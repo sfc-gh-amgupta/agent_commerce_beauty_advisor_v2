@@ -40,6 +40,50 @@ A complete Snowflake demo featuring two Cortex Agents for cosmetics retail: a cu
                     +---------------------------+
 ```
 
+## Industry Use Cases
+
+Agent Commerce demonstrates how retail, CPG, and consumer brands can deploy a decoupled AI architecture where Snowflake serves as the intelligent data backend — a Cortex Agent that orchestrates product knowledge, customer intelligence, inventory, social proof, and transactional operations — while interoperating with any frontend or AI platform. Brands connect their existing website chatbots, mobile apps, or voice assistants via the Cortex Agent API, and expose the same intelligence to agentic commerce platforms like ChatGPT via MCP Server. The solution addresses personalized product consultation through visual AI, intelligent product discovery via semantic search, automated label compliance through multimodal extraction, consumer sentiment intelligence across social channels, low-latency cart and checkout via hybrid tables, and executive analytics through natural language — all without requiring brands to rebuild their customer-facing experiences on Snowflake.
+
+## Business Outcomes
+
+By positioning Snowflake as the data intelligence layer behind any commerce frontend, Agent Commerce enables brands to increase conversion rates through personalized recommendations served to their existing channels, reduce support costs by offloading product knowledge queries to a Cortex Agent accessible from any chatbot, accelerate time-to-insight with natural language executive analytics, improve product safety compliance through automated label extraction and monitoring, drive customer retention via visual AI-based identification across touchpoints, and achieve platform-agnostic interoperability — any AI system that speaks REST or MCP can tap into the brand's unified data intelligence without data duplication or custom integrations.
+
+## Solution Capabilities
+
+**Vision**: Brands deploy a Cortex Agent as their unified data intelligence backend on Snowflake — decoupled from any specific frontend. The agent interoperates with the brand's existing chatbot or mobile app via the Cortex Agent API, and with Agentic commerce platforms like ChatGPT  via MCP Server — enabling a single source of product knowledge, customer intelligence, and transactional capability that serves every channel without data duplication.
+
+| Key Business Capability | Required Technology Component | Enabling Snowflake Feature(s) |
+|------------------------|-------------------------------|-------------------------------|
+| Visual AI Customer Identification | Containerized ML for visual profiling with embedding-based matching, served to any calling application | SPCS, Vector Similarity, Presigned URLs |
+| Product Label Intelligence & Compliance | Multimodal AI extraction from product images with continuous refresh and semantic indexing | AI_COMPLETE, Dynamic Tables, Cortex Search |
+| Data Quality & Operational Trust | Automated monitoring of freshness, completeness, and business rule validation | Data Metric Functions (built-in + custom) |
+| Cross-Platform Agent Interoperability | Cortex Agent exposed via REST API for brand frontends and via MCP for AI platforms (ChatGPT, Claude, Copilot) | MCP Server, Cortex Agents, Cortex Agent API |
+| Executive Reporting & Decision Support | Natural language analytics with automated email delivery and visual dashboards | Cortex Analyst, Semantic Views, Streamlit |
+| Source-Controlled Deployment & Experimentation | Version-controlled SQL pipelines with interactive AI processing notebooks | Git Integration, Snowflake Notebooks |
+| Transactional Commerce Operations | Full cart lifecycle with ACID-compliant order processing at sub-second latency, callable from any frontend | Hybrid Tables |
+
+## Snowflake Features Role in the Solution
+
+| Workload | Feature | Role in Solution |
+|----------|---------|-----------------|
+| **AI/ML** | Cortex Agents | Multi-tool orchestration — the intelligent backend that any frontend or AI platform calls into |
+| | Cortex Search | Semantic search with INCREMENTAL refresh across products, labels, social content |
+| | Cortex Analyst | Text-to-SQL over semantic views for structured queries without raw SQL |
+| | AI_COMPLETE (AISQL) | Multimodal inference for label image extraction and dynamic table processing |
+| | Model Serving & Model Registry (SPCS) | Containerized ML model serving and registry for visual AI inference on GPU-capable compute |
+| | Vector Similarity | Embedding-based customer identification via VECTOR_COSINE_SIMILARITY |
+| | MCP Server | Expose the Cortex Agent to ChatGPT, Claude Desktop, Copilot, and any MCP-compatible client |
+| **Horizon** | Semantic Views | Business-friendly data model layer enabling natural language analytics |
+| | Data Metric Functions | Quality monitoring — freshness, null counts, custom business rule validation |
+| **Data Engineering** | Dynamic Tables | Continuous AI-powered extraction pipelines with automatic refresh |
+| | Git Integration | Source-controlled SQL deployment directly from GitHub repository stage |
+| | Snowflake Notebooks | Interactive development of AISQL multimodal pipelines |
+| | Presigned URLs | Secure, time-limited image URLs for product media served to external frontends |
+| **Transactions** | Hybrid Tables | Low-latency OLTP for cart, orders, payments with ACID guarantees |
+| **Apps & Collaboration** | Streamlit | Interactive dashboards for executive-facing experiences |
+
+
+
 ## Prerequisites
 
 - **Snowflake account** with ACCOUNTADMIN role
@@ -50,13 +94,23 @@ A complete Snowflake demo featuring two Cortex Agents for cosmetics retail: a cu
 
 ## Quick Start (CoCo Deployment)
 
-The recommended deployment method is via Cortex Code (CoCo):
+The recommended deployment method is via Cortex Code (CoCo).
+
+**1. Download the skill (one-time):**
+
+```bash
+mkdir -p ~/.snowflake/cortex/skills/deploy_agent_commerce_beauty_advisor
+curl -sL https://raw.githubusercontent.com/sfc-gh-amgupta/agent_commerce_beauty_advisor_v2/main/.snowflake/cortex/skills/deploy_agent_commerce_beauty_advisor/SKILL.md \
+  -o ~/.snowflake/cortex/skills/deploy_agent_commerce_beauty_advisor/SKILL.md
+```
+
+**2. Invoke in CoCo:**
 
 ```
-/agent_commerce_beauty_advisor_skill
+/deploy_agent_commerce_beauty_advisor
 ```
 
-This invokes the `agent_commerce_beauty_advisor_skill` skill which handles all steps automatically.
+This handles all deployment steps automatically — SQL execution, Docker image build/push, object verification, and agent testing.
 
 ## Manual Deployment
 

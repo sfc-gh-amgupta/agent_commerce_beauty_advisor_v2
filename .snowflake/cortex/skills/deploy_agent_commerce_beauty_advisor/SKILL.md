@@ -564,11 +564,13 @@ SELECT SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
 
 **Model unavailable errors**: This demo uses `claude-opus-4-6` which requires cross-region inference. Verify `SHOW PARAMETERS LIKE 'CORTEX_ENABLED_CROSS_REGION' IN ACCOUNT;` returns `ANY_REGION`. If not: `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';`
 
-**Chatbot URL shows JSON instead of UI**: The Docker image must include `backend/static/` with the pre-built React frontend. Verify the Dockerfile has `COPY static/ ./static/` (not `RUN mkdir -p /app/static`). If the static files are missing from the repo, download them from `https://github.com/sfc-gh-amgupta/agent_commerce_beauty_advisor/tree/main/backend/static`. Rebuild and push the Docker image, then restart the SPCS service.
+**Chatbot URL shows JSON instead of UI**: The Docker image must include `backend/static/` with the pre-built React frontend. Verify the Dockerfile has `COPY static/ ./static/` (not `RUN mkdir -p /app/static`). If the static files are missing from the repo, download them from `https://github.com/sfc-gh-amgupta/agent_commerce_beauty_advisor/tree/main/backend/static`. Rebuild and push the Docker image, then DROP and recreate the SPCS service (suspend/resume does NOT pull a new image).
 
 **SPCS endpoint requires passkey/biometric in browser**: Public SPCS endpoints use Snowflake OAuth which requires passkey verification. This is expected behavior — users must authenticate in their browser. Automated API testing (curl, Python requests) is not possible without a valid OAuth token. Use `DATA_AGENT_RUN` SQL for automated testing instead.
 
 **DATA_AGENT_RUN query times out**: The agent orchestrates multiple tools (search, analyst, cart operations) and complex queries can take 60-180s. Use `timeout_seconds=1200` with `snowflake_sql_execute`. If it still times out, try simpler questions first (e.g., "What products do you have?") to verify basic connectivity.
+
+**SPCS service not picking up new Docker image after push**: `ALTER SERVICE ... SUSPEND` / `RESUME` does NOT pull a new image — it restarts with the same cached image digest. You must `DROP SERVICE` and `CREATE SERVICE` again to pick up the latest image from the registry. The ingress URL will change after recreation — always query `SHOW ENDPOINTS` for the current URL.
 
 **DMF schedule**: Use 5-field cron format: `USING CRON 0 */5 * * * UTC`. Six-field formats (with seconds) may be silently converted.
 

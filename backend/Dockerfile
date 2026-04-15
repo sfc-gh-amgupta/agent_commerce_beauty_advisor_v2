@@ -41,7 +41,7 @@ RUN pip install --no-cache-dir -r requirements-final.txt
 # Copy application code
 COPY app/ ./app/
 
-RUN mkdir -p /app/static
+COPY static/ ./static/
 
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash appuser && \

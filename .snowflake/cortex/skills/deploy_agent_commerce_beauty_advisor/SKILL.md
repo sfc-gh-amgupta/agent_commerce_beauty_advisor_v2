@@ -255,6 +255,10 @@ If PENDING, wait 30s and retry up to 10 times.
 EXECUTE IMMEDIATE FROM @AGENT_COMMERCE.UTIL.AGENT_COMMERCE_GIT/branches/main/sql/10_setup_dmfs.sql;
 ```
 
+## Step 6c: Deploy Notebook
+
+The chatbot frontend (React UI) is pre-built and included in the Docker image via `backend/static/`. The Dockerfile has `COPY static/ ./static/` which bundles `index.html`, `vite.svg`, and the JS/CSS assets into the image. No separate frontend build step is needed.
+
 Deploy the walkthrough notebook from the git repo:
 ```sql
 CREATE OR REPLACE NOTEBOOK AGENT_COMMERCE.UTIL.NRFDEMO_MULTIMODAL_PROCESSING
@@ -334,26 +338,44 @@ Test both agents with these questions. Present each question, run it, and report
 
 ### Test A: Beauty Advisor Agent (6 questions)
 
-Run each via the agent (use `snowflake_sql_execute` with `SNOWFLAKE.CORTEX.DATA_AGENT_RUN()`):
+Run each via the agent (use `snowflake_sql_execute` with `SNOWFLAKE.CORTEX.DATA_AGENT_RUN()`). **Set timeout_seconds to 1200** — the agent orchestrates multiple tools (search, analyst, cart) and complex queries can take 60-180s.
 
-Example:
+**IMPORTANT**: Q1-Q3 and Q6 are independent. Q4 ("Do you have it in stock?") requires conversational context from Q3 — pass the prior messages in the `messages` array. Q5 requires context from Q4.
+
+Example (single question):
 ```sql
 SELECT TRY_PARSE_JSON(
   SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
     'AGENT_COMMERCE.UTIL.AGENTIC_COMMERCE_ASSISTANT',
-    $${"messages": [{"role": "user", "content": [{"type": "text", "text": "Can you recommend face products for my oily skin with warm undertone"}]}]}$$
+    $${"messages": [{"role": "user", "content": [{"type": "text", "text": "YOUR QUESTION"}]}]}$$
   )
 ) AS resp;
 ```
 
-| # | Question | Expected Behavior |
-|---|----------|-------------------|
-| 1 | Can you recommend face products for my oily skin with warm undertone | ProductAnalyst returns skin_type filtered results |
-| 2 | Compare these 2 foundations - Summer Fridays Luxe Foundation and Drunk Elephant Pro Foundation | Multi-product lookup |
-| 3 | How are the reviews for Summer Fridays Luxe Foundation on your website | SocialSearch/SocialAnalyst |
-| 4 | Do you have it in stock? | InventoryAnalyst follow-up |
-| 5 | Add it to my cart and checkout | ACP cart flow |
-| 6 | List the ingredients and any warnings for Summer Fridays Luxe Foundation | LabelSearch + GetLabelURL |
+Example (multi-turn for Q4 — include Q3 question + Q3 response + Q4 question):
+```sql
+SELECT TRY_PARSE_JSON(
+  SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
+    'AGENT_COMMERCE.UTIL.AGENTIC_COMMERCE_ASSISTANT',
+    $${"messages": [
+      {"role": "user", "content": [{"type": "text", "text": "How are the reviews for Summer Fridays Luxe Foundation on your website"}]},
+      {"role": "assistant", "content": "<PASTE Q3 RESPONSE TEXT HERE>"},
+      {"role": "user", "content": [{"type": "text", "text": "Do you have it in stock?"}]}
+    ]}$$
+  )
+) AS resp;
+```
+
+| # | Question | Expected Behavior | Pass Criteria |
+|---|----------|-------------------|---------------|
+| 1 | Can you recommend face products for my oily skin with warm undertone | ProductAnalyst returns skin_type filtered results | Response contains product names with prices |
+| 2 | Compare these 2 foundations - Summer Fridays Luxe Foundation and Drunk Elephant Pro Foundation | Multi-product lookup | Both products mentioned with comparison |
+| 3 | How are the reviews for Summer Fridays Luxe Foundation on your website | SocialSearch/SocialAnalyst | Review summaries, ratings, or sentiment |
+| 4 | Do you have it in stock? (multi-turn — include Q3 context) | InventoryAnalyst follow-up | Stock/inventory info for Summer Fridays Luxe Foundation |
+| 5 | Add it to my cart and checkout (multi-turn — include Q4 context) | ACP cart flow | Cart creation and/or checkout steps |
+| 6 | List the ingredients and any warnings for Summer Fridays Luxe Foundation | LabelSearch + GetLabelURL | Ingredient list and/or warnings |
+
+**After each question**: Extract `resp:choices[0]:messages[0]:content` for the text response. Report pass/fail.
 
 ### Test B: Executive Product 360 (4 questions)
 
@@ -366,7 +388,45 @@ SELECT TRY_PARSE_JSON(
 
 **Testing approach**: For each question, check agent logs to confirm the correct tools were invoked. If any test fails, check SPCS logs and agent error details. Troubleshoot and retry.
 
-**Only declare deployment SUCCESS after all 10 test questions produce reasonable results.**
+**Only declare deployment SUCCESS after all SQL-based test questions produce reasonable results.**
+
+## Step 8b: Chatbot Widget Validation
+
+The chatbot widget runs on SPCS with a public endpoint that requires Snowflake OAuth with passkey/biometric verification. This means automated API testing via `web_fetch` or `curl` is NOT possible — the SPCS ingress enforces browser-based OAuth.
+
+**What Step 8 already validates**: The `DATA_AGENT_RUN` SQL tests in Step 8 invoke the **exact same Cortex Agent** (`AGENTIC_COMMERCE_ASSISTANT`) that the chatbot widget calls via its FastAPI backend. If all 6 SQL tests pass, the agent logic is confirmed working.
+
+**What Step 8b validates**: The SPCS service is running and the chatbot UI is accessible.
+
+**Validate SPCS service health:**
+```sql
+SELECT v.value:status::STRING AS status, v.value:containerName::STRING AS container
+FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) t, LATERAL FLATTEN(input => PARSE_JSON(t."status")) v;
+```
+Run this after:
+```sql
+CALL SYSTEM$GET_SERVICE_STATUS('AGENT_COMMERCE.UTIL.AGENT_COMMERCE_BACKEND');
+```
+
+**Validate endpoint is reachable:**
+```sql
+SHOW ENDPOINTS IN SERVICE AGENT_COMMERCE.UTIL.AGENT_COMMERCE_BACKEND;
+```
+Confirm `ingress_url` is returned and `is_public = true`.
+
+**Manual chatbot test (user performs in browser):**
+Present the chatbot URL to the user and instruct them to open it in their browser to test conversationally:
+
+| # | Question | What to Look For |
+|---|----------|-----------------|
+| 1 | Can you recommend face products for my oily skin with warm undertone | Product names with prices, skin-type filtering |
+| 2 | Compare these 2 foundations - Summer Fridays Luxe Foundation and Drunk Elephant Pro Foundation | Both products mentioned with comparison |
+| 3 | How are the reviews for Summer Fridays Luxe Foundation on your website | Review summaries, ratings, or sentiment |
+| 4 | Do you have it in stock? | Inventory/stock info using conversation context |
+| 5 | Add it to my cart and checkout | Cart creation and checkout confirmation |
+| 6 | List the ingredients and any warnings I should be aware of for Summer Fridays Luxe Foundation | Ingredient list and/or warnings |
+
+**Only proceed to Step 9 after Step 8 SQL tests pass and SPCS service is confirmed READY.**
 
 ## Step 9: Deployment Complete — Everything You Need to Demo
 
@@ -380,7 +440,7 @@ Run these to get the live URLs:
 SHOW ENDPOINTS IN SERVICE AGENT_COMMERCE.UTIL.AGENT_COMMERCE_BACKEND;
 ```
 
-Extract the `ingress_url` from the result — this is the **Beauty Advisor Chatbot URL**.
+Extract the `ingress_url` from the result — this is the **Beauty Advisor Chatbot URL**. Users open this in their browser, authenticate via Snowflake OAuth (passkey/biometric), and get the chatbot UI.
 
 ```sql
 SHOW STREAMLITS IN SCHEMA AGENT_COMMERCE.UTIL;
@@ -398,7 +458,7 @@ Present this to the user in a clean format:
 
 | What | Where |
 |------|-------|
-| **Beauty Advisor Chatbot** | `https://<ingress_url from SHOW ENDPOINTS>` (open in browser) |
+| **Beauty Advisor Chatbot** | `https://<ingress_url from SHOW ENDPOINTS>` (open in browser — requires Snowflake OAuth) |
 | **Executive Product 360 Dashboard** | Snowsight > Streamlit > `AGENT_COMMERCE.UTIL.EXECUTIVE_PRODUCT_360` |
 | **Notebook (AISQL Pipeline)** | Snowsight > Notebooks > `AGENT_COMMERCE.UTIL.NRFDEMO_MULTIMODAL_PROCESSING` |
 | **MCP Server** | `AGENT_COMMERCE.UTIL.AGENTIC_COMMERCE_MCP_SERVER` — connect from ChatGPT, Claude Desktop, or VS Code Copilot |
@@ -502,6 +562,12 @@ SELECT SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
 **Agent invocation fails with "Unknown function SNOWFLAKE.CORTEX.AGENT"**: Use `SNOWFLAKE.CORTEX.DATA_AGENT_RUN('<db>.<schema>.<agent_name>', $${ ... }$$)` — not `SNOWFLAKE.CORTEX.AGENT()`. See Snowflake docs for DATA_AGENT_RUN.
 
 **Model unavailable errors**: This demo uses `claude-opus-4-6` which requires cross-region inference. Verify `SHOW PARAMETERS LIKE 'CORTEX_ENABLED_CROSS_REGION' IN ACCOUNT;` returns `ANY_REGION`. If not: `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';`
+
+**Chatbot URL shows JSON instead of UI**: The Docker image must include `backend/static/` with the pre-built React frontend. Verify the Dockerfile has `COPY static/ ./static/` (not `RUN mkdir -p /app/static`). If the static files are missing from the repo, download them from `https://github.com/sfc-gh-amgupta/agent_commerce_beauty_advisor/tree/main/backend/static`. Rebuild and push the Docker image, then restart the SPCS service.
+
+**SPCS endpoint requires passkey/biometric in browser**: Public SPCS endpoints use Snowflake OAuth which requires passkey verification. This is expected behavior — users must authenticate in their browser. Automated API testing (curl, Python requests) is not possible without a valid OAuth token. Use `DATA_AGENT_RUN` SQL for automated testing instead.
+
+**DATA_AGENT_RUN query times out**: The agent orchestrates multiple tools (search, analyst, cart operations) and complex queries can take 60-180s. Use `timeout_seconds=1200` with `snowflake_sql_execute`. If it still times out, try simpler questions first (e.g., "What products do you have?") to verify basic connectivity.
 
 **DMF schedule**: Use 5-field cron format: `USING CRON 0 */5 * * * UTC`. Six-field formats (with seconds) may be silently converted.
 

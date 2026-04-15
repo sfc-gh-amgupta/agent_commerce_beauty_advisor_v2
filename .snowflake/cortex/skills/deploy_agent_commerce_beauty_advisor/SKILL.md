@@ -368,12 +368,108 @@ SELECT TRY_PARSE_JSON(
 
 **Only declare deployment SUCCESS after all 10 test questions produce reasonable results.**
 
-Present final deployment summary:
-- Account URL
-- All object counts
-- Test results (10/10 pass)
-- Beauty Advisor agent link
-- Executive 360 Streamlit link
+## Step 9: Deployment Complete — Everything You Need to Demo
+
+After all tests pass, present the following to the user as the final deployment handoff.
+
+### 9a. Retrieve URLs
+
+Run these to get the live URLs:
+
+```sql
+SHOW ENDPOINTS IN SERVICE AGENT_COMMERCE.UTIL.AGENT_COMMERCE_BACKEND;
+```
+
+Extract the `ingress_url` from the result — this is the **Beauty Advisor Chatbot URL**.
+
+```sql
+SHOW STREAMLITS IN SCHEMA AGENT_COMMERCE.UTIL;
+```
+
+### 9b. Present Final Summary
+
+Present this to the user in a clean format:
+
+---
+
+**Deployment Complete!** Here is everything you need to run the demo.
+
+#### Access Points
+
+| What | Where |
+|------|-------|
+| **Beauty Advisor Chatbot** | `https://<ingress_url from SHOW ENDPOINTS>` (open in browser) |
+| **Executive Product 360 Dashboard** | Snowsight > Streamlit > `AGENT_COMMERCE.UTIL.EXECUTIVE_PRODUCT_360` |
+| **Notebook (AISQL Pipeline)** | Snowsight > Notebooks > `AGENT_COMMERCE.UTIL.NRFDEMO_MULTIMODAL_PROCESSING` |
+| **MCP Server** | `AGENT_COMMERCE.UTIL.AGENTIC_COMMERCE_MCP_SERVER` — connect from ChatGPT, Claude Desktop, or VS Code Copilot |
+
+#### Invoke Agents via SQL (Snowsight / Notebooks)
+
+Beauty Advisor:
+```sql
+SELECT SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
+  'AGENT_COMMERCE.UTIL.AGENTIC_COMMERCE_ASSISTANT',
+  $${"messages": [{"role": "user", "content": [{"type": "text", "text": "YOUR QUESTION HERE"}]}]}$$
+);
+```
+
+Executive Product 360:
+```sql
+SELECT SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
+  'AGENT_COMMERCE.UTIL.EXECUTIVE_PRODUCT_360',
+  $${"messages": [{"role": "user", "content": [{"type": "text", "text": "YOUR QUESTION HERE"}]}]}$$
+);
+```
+
+#### Demo Test Questions
+
+**Beauty Advisor Agent** (use in chatbot or SQL):
+
+| # | Question |
+|---|----------|
+| 1 | Can you recommend face products for my oily skin with warm undertone |
+| 2 | Compare these 2 foundations for me - Summer Fridays Luxe Foundation and Drunk Elephant Pro Foundation |
+| 3 | How are the reviews for Summer Fridays Luxe Foundation on your website |
+| 4 | Do you have it in stock? |
+| 5 | Add it to my cart and checkout |
+| 6 | List the ingredients and any warnings I should be aware of for Summer Fridays Luxe Foundation |
+
+**Executive Product 360** (use in Streamlit dashboard or SQL):
+
+| # | Question |
+|---|----------|
+| 1 | What are my top products in past 6 months |
+| 2 | Why am I doing better in lip than others? |
+| 3 | What has been my stock levels across non lip products |
+| 4 | Summarize the findings and send email to cdo@operations.com |
+
+#### What Was Deployed & Where to Find It
+
+| Category | Objects | Snowsight Location |
+|----------|---------|-------------------|
+| **Database** | AGENT_COMMERCE | Databases > AGENT_COMMERCE |
+| **Schemas** | PRODUCTS, SOCIAL, INVENTORY, CUSTOMERS, CART_OLTP, UTIL | Databases > AGENT_COMMERCE > Schemas |
+| **Tables** | 17 standard + 7 hybrid (CART_OLTP) + 1 dynamic | Each schema's Tables tab |
+| **Cortex Agents** | AGENTIC_COMMERCE_ASSISTANT (17 tools), EXECUTIVE_PRODUCT_360 (6 tools) | AI & ML > Cortex Agents |
+| **Cortex Search** | PRODUCT_SEARCH_SERVICE, LABEL_SEARCH_SERVICE, SOCIAL_SEARCH_SERVICE | AI & ML > Cortex Search |
+| **Semantic Views** | PRODUCT, SOCIAL_PROOF, CART, CUSTOMER, INVENTORY | Each schema's Semantic Views tab |
+| **MCP Server** | AGENTIC_COMMERCE_MCP_SERVER | AI & ML > MCP Servers |
+| **Streamlit** | EXECUTIVE_PRODUCT_360 | Streamlit |
+| **Notebook** | NRFDEMO_MULTIMODAL_PROCESSING | Notebooks |
+| **SPCS Service** | AGENT_COMMERCE_BACKEND (FastAPI) | Compute > Services |
+| **Compute Pool** | AGENT_COMMERCE_POOL (CPU_X64_S) | Compute > Compute Pools |
+| **DMFs** | FRESHNESS, NULL_COUNT, ROW_COUNT, COST_EXCEEDS_PRICE on PRODUCTS table | Databases > AGENT_COMMERCE > PRODUCTS > PRODUCTS table > Data Quality |
+| **Dynamic Table** | PRODUCT_LABEL_EXTRACT (AI label extraction, 5-min refresh) | Databases > AGENT_COMMERCE > PRODUCTS > Dynamic Tables |
+| **Warehouse** | AGENT_COMMERCE_WH (X-SMALL) | Warehouses |
+
+#### Monitoring
+
+- **Dynamic Table refresh**: Snowsight > Databases > AGENT_COMMERCE > PRODUCTS > Dynamic Tables > PRODUCT_LABEL_EXTRACT — check refresh history and status
+- **Data Quality (DMFs)**: Snowsight > Databases > AGENT_COMMERCE > PRODUCTS > PRODUCTS table > Data Quality tab — view freshness, null counts, row counts, and custom metric results
+- **SPCS Service health**: `SELECT SYSTEM$GET_SERVICE_STATUS('AGENT_COMMERCE.UTIL.AGENT_COMMERCE_BACKEND');`
+- **Cortex Search index status**: `SHOW CORTEX SEARCH SERVICES IN DATABASE AGENT_COMMERCE;` — check index build status
+
+---
 
 ## Stopping Points
 

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Commerce - Architecture Overview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; padding: 32px 20px; color: #1a1a2e; }
+  .canvas { max-width: 1100px; margin: 0 auto; }
+  h1 { text-align: center; font-size: 20px; color: #0e4d6f; margin-bottom: 24px; letter-spacing: 0.3px; }
+
+  .box {
+    border: 1.5px solid #0e4d6f;
+    border-radius: 6px;
+    padding: 8px 14px;
+    background: #fff;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .box-filled { background: #fff; color: #1a1a2e; font-weight: 600; }
+  .sub { font-size: 10px; font-weight: 400; font-style: italic; opacity: 0.8; margin-top: 2px; }
+  .arrow-down { text-align: center; color: #94b8cc; font-size: 14px; line-height: 1; margin: 5px 0; }
+  .arrow-down::after { content: '↓'; display: block; }
+  .arrow-up { text-align: center; color: #94b8cc; font-size: 14px; line-height: 1; margin: 3px 0; }
+  .arrow-up::after { content: '↑'; display: block; }
+
+  .frontends { display: flex; justify-content: center; gap: 16px; margin-bottom: 6px; }
+
+  .interop-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin: 8px auto;
+    padding: 10px 20px;
+    border: 2px dashed #0e4d6f;
+    border-radius: 10px;
+    background: #f5fafd;
+    max-width: 460px;
+    position: relative;
+  }
+  .interop-tag {
+    position: absolute;
+    left: -2px; top: 50%;
+    transform: translateX(-100%) translateY(-50%);
+    font-size: 9px;
+    font-weight: 700;
+    color: #0e4d6f;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1.5px solid #0e4d6f;
+    white-space: nowrap;
+  }
+  .interop-note { text-align: center; font-size: 9px; color: #667; font-style: italic; margin-top: 2px; }
+
+  .agents-row {
+    display: flex;
+    gap: 14px;
+    margin: 10px 0;
+    align-items: stretch;
+  }
+  .agent-beauty {
+    flex: 3;
+    background: #e6f1f8;
+    color: #0e4d6f;
+    font-weight: 700;
+    border: 2.5px solid #0e4d6f;
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-size: 15px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .agent-exec {
+    flex: 0.8;
+    background: #e6f1f8;
+    color: #0e4d6f;
+    font-weight: 700;
+    border: 2.5px solid #0e4d6f;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .agent-exec .sub { color: #0e4d6f; }
+
+  .cols { display: flex; gap: 14px; margin-bottom: 10px; }
+  .col { min-width: 0; display: flex; flex-direction: column; }
+  .col-1 { flex: 1.1; }
+  .col-2 { flex: 1; }
+  .col-3 { flex: 1.1; }
+
+  .col-header {
+    font-size: 11px;
+    font-weight: 700;
+    color: #0e4d6f;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 6px 0;
+    border-bottom: 2px solid #0e4d6f;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .col-body { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+
+  .group {
+    border: 1.5px solid #c5d5e0;
+    border-radius: 6px;
+    padding: 8px;
+    background: #fafcfd;
+  }
+  .group-label { font-size: 11px; font-weight: 600; color: #0e4d6f; margin-bottom: 5px; text-align: center; }
+  .group-row { display: flex; gap: 6px; }
+  .group-row + .group-row { margin-top: 5px; }
+  .group-row .box { flex: 1; font-size: 11px; padding: 6px 8px; }
+
+  .center-items .col-body { align-items: center; }
+  .center-items .box { width: 150px; }
+
+  .sem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .sem-grid .box { font-size: 11px; padding: 7px 8px; }
+
+  .governance {
+    border: 1.5px solid #0e4d6f;
+    border-radius: 6px;
+    padding: 7px 16px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0e4d6f;
+    background: #e6f1f8;
+    margin: 10px 0;
+  }
+
+  .signals-row { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin: 8px 0; }
+  .signal { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .signal-icon {
+    width: 32px; height: 24px;
+    background: #e6f1f8;
+    border: 1.5px solid #0e4d6f;
+    border-radius: 4px 4px 8px 8px;
+    position: relative;
+  }
+  .signal-icon::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px; right: -1px;
+    height: 8px;
+    border: 1.5px solid #0e4d6f;
+    border-radius: 50%;
+    background: #e6f1f8;
+  }
+  .signal-text { font-size: 10px; color: #0e4d6f; font-weight: 500; }
+  .signals-label { text-align: center; font-size: 11px; color: #667; font-style: italic; margin-top: 4px; }
+
+  .connector-row { display: flex; gap: 14px; height: 40px; margin-bottom: 2px; }
+  .connector-cell { display: flex; justify-content: center; align-items: center; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <h1>Agent Commerce &mdash; Architecture Overview</h1>
+
+  <!-- Frontends -->
+  <div style="display:flex; gap:14px;">
+    <div style="flex:3; display:flex; justify-content:center; gap:16px;">
+      <div class="box">Beauty Advisor<br>on Portal</div>
+      <div class="box">ChatGPT</div>
+    </div>
+    <div style="flex:0.8; display:flex; justify-content:center;">
+      <div class="box">Snowflake<br>Intelligence</div>
+    </div>
+  </div>
+
+  <!-- Arrows from frontends -->
+  <div style="display:flex; gap:14px;">
+    <div style="flex:3; text-align:center;"><div class="arrow-down"></div></div>
+    <div style="flex:0.8; text-align:center;"><div class="arrow-down"></div></div>
+  </div>
+
+  <!-- Interop layer (left) + direct SI pipe (right) -->
+  <div style="display:flex; gap:14px; align-items:stretch;">
+    <div style="flex:3;">
+      <div class="interop-bar">
+        <div class="interop-tag">Interop</div>
+        <div class="box" style="font-size:11px;">Cortex Rest API</div>
+        <div class="box" style="font-size:11px;">Cortex MCP Server</div>
+      </div>
+      <div class="interop-note">Agent Interoperability &mdash; decouples data agent from frontend channels</div>
+    </div>
+    <div style="flex:0.8; display:flex; justify-content:center; align-items:center;">
+      <svg width="2" height="60"><line x1="1" y1="0" x2="1" y2="60" stroke="#94b8cc" stroke-width="1.5" stroke-dasharray="5,3"/></svg>
+    </div>
+  </div>
+
+  <!-- Arrows to agents -->
+  <div style="display:flex; gap:14px;">
+    <div style="flex:3; text-align:center;"><div class="arrow-down"></div></div>
+    <div style="flex:0.8; text-align:center;"><div class="arrow-down"></div></div>
+  </div>
+
+  <!-- Agents -->
+  <div class="agents-row">
+    <div class="agent-beauty">
+      Cortex Agent for Beauty Advisor
+      <div class="sub">(powers agentic commerce experience &mdash; 17 tools)</div>
+    </div>
+    <div class="agent-exec">
+      Cortex Agent for<br>Executive 360
+      <div class="sub">(powers conversational BI &mdash; 6 tools)</div>
+    </div>
+  </div>
+
+  <!-- Fan-out connectors: Beauty Advisor elbow → all 3 cols, Executive → structured only -->
+  <div style="position:relative; height:50px; margin-bottom:2px;">
+    <svg width="100%" height="50" style="position:absolute; left:0; top:0;" preserveAspectRatio="none" viewBox="0 0 1100 50">
+      <!-- Beauty Advisor center ~39.5% of width = 434 -->
+      <!-- Col1 center ~17% = 187, Col2 center ~45% = 495, Col3 left ~72% = 792 -->
+      <!-- Exec360 center ~84% = 924, Col3 right ~82% = 902 -->
+      <!-- BA vertical trunk -->
+      <line x1="434" y1="0" x2="434" y2="20" stroke="#94b8cc" stroke-width="1.5"/>
+      <!-- BA horizontal bar -->
+      <line x1="187" y1="20" x2="792" y2="20" stroke="#94b8cc" stroke-width="1.5"/>
+      <!-- BA elbow to col1 -->
+      <line x1="187" y1="20" x2="187" y2="46" stroke="#94b8cc" stroke-width="1.5"/>
+      <polygon points="183,42 191,42 187,49" fill="#94b8cc"/>
+      <!-- BA elbow to col2 -->
+      <line x1="495" y1="20" x2="495" y2="46" stroke="#94b8cc" stroke-width="1.5"/>
+      <polygon points="491,42 499,42 495,49" fill="#94b8cc"/>
+      <!-- BA elbow to col3 -->
+      <line x1="792" y1="20" x2="792" y2="46" stroke="#94b8cc" stroke-width="1.5"/>
+      <polygon points="788,42 796,42 792,49" fill="#94b8cc"/>
+      <!-- Exec360 arrow to structured col -->
+      <line x1="924" y1="0" x2="924" y2="46" stroke="#94b8cc" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <polygon points="920,42 928,42 924,49" fill="#94b8cc"/>
+      <text x="936" y="16" font-size="9" fill="#94b8cc" font-weight="600" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif">Exec 360</text>
+    </svg>
+  </div>
+
+  <!-- Three-column tools -->
+  <div class="cols">
+    <div class="col col-1">
+      <div class="col-header">Custom Tools</div>
+      <div class="col-body">
+        <div class="group">
+          <div class="group-label">Skin Analysis Area &amp; Color</div>
+          <div class="group-row">
+            <div class="box">Model<br>Registry</div>
+            <div class="box">Managed Model<br>Serving</div>
+          </div>
+          <div class="group-row">
+            <div class="box">BYO Skin Analysis ML Model</div>
+          </div>
+        </div>
+        <div class="group">
+          <div class="group-label">Face Embedding Distance</div>
+          <div class="group-row">
+            <div class="box">Vector<br>Distance Fn</div>
+            <div class="box">Binary<br>Vector Store</div>
+          </div>
+        </div>
+        <div class="group">
+          <div class="group-label">Cart Tools</div>
+          <div class="group-row">
+            <div class="box">UDF<br><span style="font-size:9px;">(can also call external cart APIs)</span></div>
+            <div class="box">Hybrid Tables<br><span style="font-size:9px;">for Txn writes</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col col-2 center-items">
+      <div class="col-header">Unstructured Data Retrieval</div>
+      <div class="col-body">
+        <div style="display:flex;gap:6px;justify-content:center;">
+          <div class="box" style="width:auto;">Product Label<br>Search</div>
+          <div class="box" style="width:auto;">Social Feed<br>Search</div>
+        </div>
+        <div class="arrow-up"></div>
+        <div class="box">Text Vector Store</div>
+        <div class="arrow-up"></div>
+        <div class="box">Dynamic Table</div>
+        <div class="arrow-up"></div>
+        <div class="box">AISQL Complete</div>
+        <div class="arrow-up"></div>
+        <div class="box">Product Label<br>Image</div>
+      </div>
+    </div>
+
+    <div class="col col-3">
+      <div class="col-header">Structured Data Retrieval &amp; Semantics</div>
+      <div class="col-body">
+        <div class="sem-grid">
+          <div class="box box-filled">Product<br>Semantic</div>
+          <div class="box box-filled">Inventory<br>Semantic</div>
+          <div class="box box-filled">Social<br>Semantic</div>
+          <div class="box box-filled">Order<br>Semantic</div>
+          <div class="box box-filled">Customer<br>Semantic</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Governance -->
+  <div class="governance">Governance &amp; Data Quality</div>
+
+  <!-- Data Signals -->
+  <div class="signals-row">
+    <div class="signal"><div class="signal-icon"></div><div class="signal-text">Product</div></div>
+    <div class="signal"><div class="signal-icon"></div><div class="signal-text">Pricing</div></div>
+    <div class="signal"><div class="signal-icon"></div><div class="signal-text">Social</div></div>
+    <div class="signal"><div class="signal-icon"></div><div class="signal-text">Inventory</div></div>
+    <div class="signal"><div class="signal-icon"></div><div class="signal-text">Fulfillment</div></div>
+    <div class="signal"><div class="signal-icon"></div><div class="signal-text">Customer</div></div>
+  </div>
+  <div class="signals-label">Required Data Signals for Agent Commerce</div>
+
+</div>
+</body>
+</html>

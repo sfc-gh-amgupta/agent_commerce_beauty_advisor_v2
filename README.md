@@ -1,50 +1,20 @@
-# Agent Commerce - Beauty Advisor v2
+# Agent Commerce - Beauty Advisor
 
 A complete Snowflake demo featuring two Cortex Agents for cosmetics retail: a customer-facing **Beauty Advisor** with face analysis, product matching, and ACP-compliant checkout, and an executive-facing **Executive Product 360** analytics dashboard.
 
 ## Architecture Overview
 
-```
-                    +---------------------------+
-                    |    Beauty Advisor Agent    |
-                    |  (17 tools, face analysis, |
-                    |   cart, checkout, search)  |
-                    +---------------------------+
-                              |
-          +-------------------+-------------------+
-          |           |           |           |
-    Semantic Views  Cortex    UDFs/Procs   SPCS Backend
-    (5 views)       Search    (face embed,  (FastAPI -
-                    (3 svc)    color match)  face analysis)
-          |           |           |           |
-    +-----+-----+    |     +-----+-----+     |
-    | PRODUCTS  |    |     | CUSTOMERS |     |
-    | SOCIAL    |    |     | CART_OLTP |     |
-    | INVENTORY |    |     | (hybrid)  |     |
-    | CUSTOMERS |    |     +-----------+     |
-    | CART_OLTP |    |                       |
-    +-----------+    |     +-----------+     |
-                     +---->| Dynamic   |<----+
-                           | Table     |
-                           | (labels)  |
-                           +-----------+
+<p align="center">
+  <img src="./images/architecture_overview.png" alt="Architecture Overview" width="100%">
+</p>
 
-                    +---------------------------+
-                    | Executive Product 360     |
-                    | (6 tools, email, Streamlit)|
-                    +---------------------------+
+> Open [architecture.html](architecture.html) in a browser for the interactive version.
 
-                    +---------------------------+
-                    |   MCP Server              |
-                    | (wraps Beauty Advisor)    |
-                    +---------------------------+
-```
+## Solution Overview
 
-## Industry Use Cases
+Agent Commerce solution demonstrates how retail, CPG, and consumer brands can deploy a decoupled AI architecture where Snowflake serves as the intelligent data backend — a Cortex Agent that orchestrates product knowledge, customer intelligence, inventory, social proof, and transactional operations — while interoperating with any frontend or AI platform. Brands connect their existing website chatbots, mobile apps, or voice assistants via the Cortex Agent API, and expose the same intelligence to agentic commerce platforms like ChatGPT via MCP Server. The solution addresses personalized product consultation through visual AI, intelligent product discovery via semantic search, automated label compliance through multimodal extraction, consumer sentiment intelligence across social channels, low-latency cart and checkout via hybrid tables, and executive analytics through natural language — all without requiring brands to rebuild their customer-facing experiences on Snowflake.
 
-Agent Commerce demonstrates how retail, CPG, and consumer brands can deploy a decoupled AI architecture where Snowflake serves as the intelligent data backend — a Cortex Agent that orchestrates product knowledge, customer intelligence, inventory, social proof, and transactional operations — while interoperating with any frontend or AI platform. Brands connect their existing website chatbots, mobile apps, or voice assistants via the Cortex Agent API, and expose the same intelligence to agentic commerce platforms like ChatGPT via MCP Server. The solution addresses personalized product consultation through visual AI, intelligent product discovery via semantic search, automated label compliance through multimodal extraction, consumer sentiment intelligence across social channels, low-latency cart and checkout via hybrid tables, and executive analytics through natural language — all without requiring brands to rebuild their customer-facing experiences on Snowflake.
-
-## Business Outcomes
+## Expected Business Outcomes
 
 By positioning Snowflake as the data intelligence layer behind any commerce frontend, Agent Commerce enables brands to increase conversion rates through personalized recommendations served to their existing channels, reduce support costs by offloading product knowledge queries to a Cortex Agent accessible from any chatbot, accelerate time-to-insight with natural language executive analytics, improve product safety compliance through automated label extraction and monitoring, drive customer retention via visual AI-based identification across touchpoints, and achieve platform-agnostic interoperability — any AI system that speaks REST or MCP can tap into the brand's unified data intelligence without data duplication or custom integrations.
 
@@ -54,10 +24,10 @@ By positioning Snowflake as the data intelligence layer behind any commerce fron
 
 | Key Business Capability | Required Technology Component | Enabling Snowflake Feature(s) |
 |------------------------|-------------------------------|-------------------------------|
-| Visual AI Customer Identification | Containerized ML for visual profiling with embedding-based matching, served to any calling application | SPCS, Vector Similarity, Presigned URLs |
-| Product Label Intelligence & Compliance | Multimodal AI extraction from product images with continuous refresh and semantic indexing | AI_COMPLETE, Dynamic Tables, Cortex Search |
+| Visual AI Skin Analysis | Containerized ML for visual profiling with embedding-based matching, served to any calling application | SPCS, Model Registry, Vector Similarity, Presigned URLs |
+| Product Label Intelligence | Multimodal AI extraction from product label images with continuous refresh and semantic indexing | AI SQL, Dynamic Tables, Cortex Search |
 | Data Quality & Operational Trust | Automated monitoring of freshness, completeness, and business rule validation | Data Metric Functions (built-in + custom) |
-| Cross-Platform Agent Interoperability | Cortex Agent exposed via REST API for brand frontends and via MCP for AI platforms (ChatGPT, Claude, Copilot) | MCP Server, Cortex Agents, Cortex Agent API |
+| Cross-Platform Agent Interoperability | Cortex Agent exposed via REST API for brand frontends and via MCP for AI platforms (ChatGPT, Claude, Copilot) | MCP Server, Cortex Agent API |
 | Executive Reporting & Decision Support | Natural language analytics with automated email delivery and visual dashboards | Cortex Analyst, Semantic Views, Streamlit |
 | Source-Controlled Deployment & Experimentation | Version-controlled SQL pipelines with interactive AI processing notebooks | Git Integration, Snowflake Notebooks |
 | Transactional Commerce Operations | Full cart lifecycle with ACID-compliant order processing at sub-second latency, callable from any frontend | Hybrid Tables |
@@ -83,6 +53,65 @@ By positioning Snowflake as the data intelligence layer behind any commerce fron
 | **Apps & Collaboration** | Streamlit | Interactive dashboards for executive-facing experiences |
 
 
+
+## Solution Walkthrough
+
+### Scene 1: Agentic Commerce on the Merchant's Website
+
+The Beauty Advisor Chatbot is powered by the Product 360 Data Agent on Snowflake Cortex. Open the chatbot URL and run these prompts in sequence:
+
+| # | Prompt | Showcases |
+|---|--------|-----------|
+| 1 | *Can you recommend face products for my oily skin with warm undertone* | Cortex Agent → Cortex Analyst over Semantic Views for personalized product discovery |
+| 2 | *Compare these 2 foundations — Summer Fridays Luxe Foundation and Drunk Elephant Pro Foundation* | Multi-tool orchestration within a single agent turn |
+| 3 | *How are the reviews for Summer Fridays Luxe Foundation on your website* | Cortex Search + Cortex Analyst for social proof retrieval |
+| 4 | *Do you have it in stock?* | Conversational context + Inventory Semantic View query |
+| 5 | *Add it to my cart and checkout* | Full cart-to-checkout via Hybrid Tables (ACID-compliant, sub-second) |
+
+### Scene 2: Agentic Commerce via ChatGPT
+
+The same Product 360 Data Agent is exposed via MCP Server. Open ChatGPT with the MCP connection and run the same prompts from Scene 1 — demonstrating identical product discovery and conversion across any AI platform.
+
+### Scene 3: Under the Hood — Building Blocks
+
+Walk through the Snowflake objects powering the agent:
+
+1. **Semantic Views** — Open `sql/07_create_semantic_views.sql` and show the 5 semantic views (Product, Social, Cart, Customer, Inventory) that give Cortex Analyst a business-friendly data model
+2. **Cortex Search** — Show the 3 search services (Product, Label, Social) with INCREMENTAL refresh in `sql/06_create_cortex_search.sql`
+3. **Data Quality (Horizon)** — Show Data Metric Functions (FRESHNESS, NULL_COUNT, ROW_COUNT, custom COST_EXCEEDS_PRICE) attached to the products table in `sql/10_setup_dmfs.sql`
+
+### Scene 3b: Unstructured Data — Notebook Walkthrough with AI SQL
+
+Open the notebook `NRFDEMO_MULTIMODAL_PROCESSING` in Snowsight and walk through it:
+
+1. **AI_COMPLETE with TO_FILE** — Show how `claude-opus-4-6` extracts structured JSON (brand, warnings, ingredients) from a product label image using AI SQL
+2. **Dynamic Table** — Show `PRODUCT_LABEL_EXTRACT` which continuously processes all 2,000+ labels on a 5-min refresh using the same AI_COMPLETE pattern
+3. **Cortex Search over extracted content** — Show how the extracted ingredients feed into `LABEL_SEARCH_SERVICE`, then prompt the chatbot (or ChatGPT): *"List the ingredients and any warnings I should be aware of for Summer Fridays Luxe Foundation"*
+
+### Scene 4: AI for Agentic Commerce Analytics
+
+Open Snowflake Intelligence connected to the Executive Product 360 Data Agent. Run these prompts:
+
+| # | Prompt | Showcases |
+|---|--------|-----------|
+| 1 | *What are my top products in past 6 months?* | Cortex Analyst text-to-SQL over Product + Checkout Semantic Views |
+| 2 | *Why am I doing better in lip than others?* | Cross-tool analysis spanning Product, Social, and Checkout data |
+| 3 | *What has been my stock levels across non lip products?* | Inventory Semantic View filtering |
+| 4 | *Summarize the findings and send email to cdo@operations.com* | Agent-triggered email delivery via custom UDF |
+
+### Scene 5: AI for Rapid Development
+
+Show how a developer uses Cortex Code to rapidly extend the Executive Product 360 Agent with an external macroeconomics dataset.
+
+1. Switch Cortex Code to **Plan mode**
+2. Enter this prompt:
+
+> Integrate the provided macroeconomics data from marketplace to my executive 360 Cortex agent. Share your plan
+> https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free
+
+3. CoCo will generate a plan covering all dependencies — marketplace data acquisition, semantic view creation, and agent tool integration
+4. Approve the plan and let CoCo execute it end-to-end
+5. Switch to Snowflake Intelligence and ask: *"How are macro trends impacting my beauty sales?"*
 
 ## Prerequisites
 

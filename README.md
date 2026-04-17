@@ -1,6 +1,6 @@
 # Agent Commerce - Beauty Advisor
 
-A complete Snowflake demo featuring two Cortex Agents for cosmetics retail: a customer-facing **Beauty Advisor** with face analysis, product matching, and ACP-compliant checkout, and an executive-facing **Executive Product 360** analytics dashboard.
+A complete Snowflake demo featuring two Cortex Agents for cosmetics retail: a customer-facing **Beauty Advisor** which covers end-to-end shopper experience discovery to conversion and an executive-facing **Executive Product 360** analytics dashboard.
 
 ## Architecture Overview
 
